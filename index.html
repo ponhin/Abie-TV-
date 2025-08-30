@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Абие TV Онлайн</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: #121212;
+      color: #f1f1f1;
+    }
+
+    header {
+      background: #1f1f1f;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 1px;
+      color: #4627ac;
+    }
+
+    /* Поиск */
+    .search-box {
+      margin: 15px auto;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .search-box input {
+      padding: 10px;
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
+      border-radius: 25px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+    .search-box button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 25px;
+      background: #ff3d00;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .search-box button:hover {
+      background: #e63500;
+    }
+
+    /* Сетка каналов */
+    .channels {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      padding: 15px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .channel {
+      background: #1e1e1e;
+      border-radius: 15px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .channel:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+    }
+    .channel img {
+      width: 100px;
+      max-width: 80%;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+    .channel h3 {
+      margin: 8px 0;
+      font-size: 16px;
+      color: #fff;
+    }
+    .channel button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 20px;
+      background: #ff3d00;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .channel button:hover {
+      background: #e63500;
+    }
+
+    /* 📺 Модальное окно (кинотеатр) */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .modal video {
+      width: 90%;
+      height: auto;
+      max-height: 80%;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    }
+    .close-btn {
+      position: absolute;
+      top: 20px; right: 30px;
+      font-size: 40px;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .close-btn:hover {
+      color: #ff3d00;
+    }
+
+    /* 🔘 Кнопка на плеере */
+    .fullscreen-btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #ff3d00;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .fullscreen-btn:hover {
+      background: #e63500;
+    }
+
+    /* 📱 Адаптация */
+    @media (max-width: 600px) {
+      header h1 { font-size: 20px; }
+      .search-box input { font-size: 14px; }
+      .search-box button { font-size: 14px; padding: 8px 15px; }
+      .channel h3 { font-size: 14px; }
+      .channel img { width: 80px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Абие TV Онлайн</h1>
+</header>
+
+<div class="search-box">
+  <input type="text" id="searchInput" placeholder="Поиск канала...">
+  <button onclick="filterChannels()">Найти</button>
+</div>
+
+<div class="channels" id="channelsContainer"></div>
+
+<!-- 🎬 Модальное окно -->
+<div id="cinemaModal" class="modal">
+  <span class="close-btn" onclick="closeCinema()">&times;</span>
+  <video id="cinemaPlayer" controls autoplay></video>
+  <button class="fullscreen-btn" onclick="goFullscreen()">⛶ Развернуть на весь экран</button>
+</div>
+
+<script>
+  let channels = [];
+  const container = document.getElementById("channelsContainer");
+  const modal = document.getElementById("cinemaModal");
+  const cinemaPlayer = document.getElementById("cinemaPlayer");
+
+  // Загружаем каналы
+  fetch("channels.json")
+    .then(r => r.json())
+    .then(data => {
+      channels = data;
+      renderChannels(channels);
+    })
+    .catch(err => {
+      console.error("Ошибка загрузки channels.json:", err);
+      container.innerHTML = "<p>Не удалось загрузить список каналов</p>";
+    });
+
+  function renderChannels(list) {
+    container.innerHTML = "";
+    if(list.length === 0) {
+      container.innerHTML = "<p>Каналы не найдены</p>";
+      return;
+    }
+    list.forEach((ch) => {
+      const div = document.createElement("div");
+      div.className = "channel";
+      div.innerHTML = `
+        <img src="${ch.logo}" alt="${ch.name}">
+        <h3>${ch.name}</h3>
+        <button onclick="openCinema('${ch.url}')">▶ Смотреть</button>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function openCinema(url) {
+    modal.style.display = "flex";
+    if(Hls.isSupported()){
+      const hls = new Hls();
+      hls.loadSource(url);
+      hls.attachMedia(cinemaPlayer);
+    } else {
+      cinemaPlayer.src = url;
+    }
+    cinemaPlayer.play();
+  }
+
+  function closeCinema() {
+    modal.style.display = "none";
+    cinemaPlayer.pause();
+    cinemaPlayer.src = ""; // очистка
+  }
+
+  function filterChannels() {
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const filtered = channels.filter(ch => ch.name.toLowerCase().includes(search));
+    renderChannels(filtered);
+  }
+
+  // 📺 Полный экран
+  function goFullscreen() {
+    if (cinemaPlayer.requestFullscreen) {
+      cinemaPlayer.requestFullscreen();
+    } else if (cinemaPlayer.webkitRequestFullscreen) {
+      cinemaPlayer.webkitRequestFullscreen();
+    } else if (cinemaPlayer.msRequestFullscreen) {
+      cinemaPlayer.msRequestFullscreen();
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+[
+  {
+    "name": "ТНТ",
+    "url": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TNT_4/variant.m3u8",
+    "logo": "https://iptvx.one/picons/tnt.png"
+  },
+  {
+    "name": "СТС",
+    "url": "https://zabava-htlive.cdn.ngenix.net/hls/CH_STS_4/variant.m3u8",
+    "logo": "https://iptvx.one/picons/sts.png"
+  },
+  {
+    "name": "ТНТ4",
+    "url": "https://zabava-htlive.cdn.ngenix.net/hls/CH_TNT4_4/variant.m3u8",
+    "logo": "https://iptvx.one/picons/tnt4.png"
+  },
+  {
+    "name": "НТВ",
+    "url": "https://zabava-htlive.cdn.ngenix.net/hls/CH_NTV_4/variant.m3u8",
+    "logo": "https://iptvx.one/picons/ntv.png"
+  },
+  {
+    "name": "Пятница",
+    "url": "https://zabava-htlive.cdn.ngenix.net/hls/CH_PYATNIZZA_4/variant.m3u8",
+    "logo": "https://epg.one/img2/1003.png"
+  },
+  {
+    "name": "Первый канал",
+    "url": "https://zabava-htlive.cdn.ngenix.net/hls/CH_1TVSD_4/variant.m3u8",
+    "logo": "https://i120.fastpic.org/big/2022/0731/5a/975757b7227dd15519c6a0e0d5f0065a.png"
+  },
+  {
+    "name": "МИР",
+    "url": "https://zabava-htlive.cdn.ngenix.net/hls/CH_MIR_4/variant.m3u8",
+    "logo": "https://iptvx.one/picons/mir.png"
+  },
+  {
+    "name": "2x2",
+    "url": "https://zabava-htlive.cdn.ngenix.net/hls/CH_2X2_4/variant.m3u8",
+    "logo": "https://iptvx.one/picons/2na2-pl2.png"
+  },
+  {
+    "name": "СТС Love",
+    "url": "https://zabava-htlive.cdn.ngenix.net/hls/CH_STSLOVE_4/variant.m3u8",
+    "logo": "https://kusa.k-itv.ru/wp-content/uploads/2016/08/sts2_love.jpg"
+  },
+  {
+    "name": "Россия 1",
+    "url": "https://zabava-htlive.cdn.ngenix.net/hls/CH_RUSSIA1_4/variant.m3u8",
+    "logo": "https://i122.fastpic.org/big/2023/0705/17/1f78a821046a3a5dedc9b714a6e0b717.png"
+  }
+]
